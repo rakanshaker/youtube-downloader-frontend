@@ -21,6 +21,7 @@
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
+        
         "deploy" : "npm run build && aws s3 sync ./build s3://ydl-youtube-downloader/latest && aws s3 sync ./build s3://ydl-youtube-downloader/$(date -j -f \"%b %d %Y %T\" \"Oct 21 1973 00:00:00\" \"+%s\")"
     },
     "eslintConfig": {
