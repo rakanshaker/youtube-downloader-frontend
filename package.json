@@ -1,38 +1,44 @@
 {
-  "name": "youtube-downloader",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.9",
-    "@testing-library/react": "^11.2.5",
-    "@testing-library/user-event": "^12.8.3",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+    "name": "youtube-downloader",
+    "version": "0.1.0",
+    "private": true,
+    "author": {
+        "name": "Rakan Shaker"
+    },
+    "dependencies": {
+        "@testing-library/jest-dom": "^5.11.9",
+        "@testing-library/react": "^11.2.5",
+        "@testing-library/user-event": "^12.8.3",
+        "aws-sdk": "^2.868.0",
+        "react": "^17.0.1",
+        "react-dom": "^17.0.1",
+        "react-scripts": "4.0.3",
+        "s3-folder-upload": "^2.3.5",
+        "web-vitals": "^1.1.1"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "deploy" : "npm run build && aws s3 sync ./build s3://ydl-youtube-downloader/latest && aws s3 sync ./build s3://ydl-youtube-downloader/$(date -j -f \"%b %d %Y %T\" \"Oct 21 1973 00:00:00\" \"+%s\")"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }
