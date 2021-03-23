@@ -1,8 +1,7 @@
 import { getAllQueryParameter } from "../utils/url";
 import axios from "axios";
 
-const BASE_URL =
-  "https://api.tubecurl.com/youtube-video/";
+const BASE_URL = "https://api.tubecurl.com/youtube-video/";
 
 const getYoutubeId = (link) => {
   const params = getAllQueryParameter(link);
