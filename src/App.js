@@ -136,7 +136,7 @@ function App() {
           className={classes.buttonConvert}
           type="submit"
         >
-          Convert
+          Get Link
         </Button>
       </form>
 
