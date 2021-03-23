@@ -15,6 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "deploy": "npm run build && aws s3 sync ./build s3://tubecurl.com --acl public-read && aws s3 sync ./build s3://ydl-youtube-downloader/$(date -j -f \"%b %d %Y %T\" \"Oct 21 1973 00:00:00\" \"+%s\")",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
