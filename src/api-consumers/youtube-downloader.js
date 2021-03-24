@@ -2,10 +2,12 @@ import { getAllQueryParameter } from "../utils/url";
 import axios from "axios";
 
 const BASE_URL = "https://api.tubecurl.com/youtube-video/";
+//https://api.tubecurl.com/youtube-video/2bWP8H123EA?download=true
 
 const getYoutubeId = (link) => {
   const params = getAllQueryParameter(link);
   const id = params.v;
+  console.log(id);
   if (!id) {
     throw new Error("no id in url");
   }
@@ -25,6 +27,7 @@ const grabResourceByUrl = async (restUrlPath) => {
 const youtubeDl = {
   getFormats: async (link) => {
     const id = getYoutubeId(link);
+    // const url = `${BASE_URL}${id}`; needs to deploy still
     const url = BASE_URL + id + "/formats";
     return grabResourceByUrl(url);
   },
@@ -34,7 +37,8 @@ const youtubeDl = {
     if (!formatId) {
       throw new Error("Your format id is not provided");
     }
-    const url = `${BASE_URL}${id}?format_id=${formatId}`;
+    //needs to deploy still
+    const url = `${BASE_URL}${id}?download=true`;
     return grabResourceByUrl(url);
   },
 };

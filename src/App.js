@@ -3,18 +3,15 @@ import { useState } from "react";
 import youtubeDl from "./api-consumers/youtube-downloader";
 import "./App.css";
 import { makeStyles } from "@material-ui/core/styles";
-// import Typography from "@material-ui/core/Typography";
-// import TextField from "@material-ui/core/TextField";
-// import Button from "@material-ui/core/Button";
 import {
   TableBody,
   TableCell,
   TableRow,
   Typography,
-  TextField,
   Button,
   Radio,
 } from "@material-ui/core";
+import Form from "./components/Form";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function App() {
+const App = () => {
   const [youtubeLink, setYoutubeLink] = useState("");
   const [formats, setFormats] = useState([]);
   const [selectedFormatId, setSelectedFormatId] = useState("");
@@ -58,7 +55,7 @@ function App() {
   const renderFormats = formats
     .filter(
       (format) =>
-        format.acodec != "none" && !format.format.includes("audio only")
+        format.acodec !== "none" && !format.format.includes("audio only")
     )
     .map((item, index) => {
       return (
@@ -87,19 +84,10 @@ function App() {
       // </div> */
       );
     });
-
-  const handleSubmit = async (ev) => {
-    ev.preventDefault();
-    const vidFormats = await youtubeDl.getFormats(youtubeLink).catch((err) => {
-      console.log("could not fetch formats due to =>", err);
-      return [];
-    });
-    console.log(vidFormats);
-    setFormats(vidFormats);
-  };
-
-  const handleInput = (ev) => {
-    setYoutubeLink(ev.target.value);
+  const handleChange = (childState) => {
+    setFormats(childState);
+    console.log(childState);
+    console.log(formats);
   };
 
   const handleDownloadClick = async () => {
@@ -120,25 +108,7 @@ function App() {
         Youtube Downloader
       </Typography>
       <Typography variant="body1">Download Youtube Videos for Free</Typography>
-      <form className={classes.form} onSubmit={handleSubmit}>
-        <TextField
-          className={classes.input}
-          id="outlined-secondary"
-          label="Paste Your Link Here"
-          variant="outlined"
-          color="secondary"
-          type="text"
-          onChange={handleInput}
-        />
-        <Button
-          variant="contained"
-          color="secondary"
-          className={classes.buttonConvert}
-          type="submit"
-        >
-          Get Link
-        </Button>
-      </form>
+      <Form onChange={handleChange} />
 
       <div className={classes.formats}>
         <TableBody>{renderFormats}</TableBody>
@@ -153,6 +123,6 @@ function App() {
       </Button>
     </div>
   );
-}
+};
 
 export default App;
