@@ -18,3 +18,7 @@ export const getAllQueryParameter = (link = "") => {
   }
   return {};
 };
+
+export const getLastParam = (link="") => {
+  return link.split('/').pop()
+}

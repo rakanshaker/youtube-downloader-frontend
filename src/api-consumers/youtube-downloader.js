@@ -1,9 +1,18 @@
-import { getAllQueryParameter } from '../utils/url';
+import { getAllQueryParameter, getLastParam } from '../utils/url';
 import axios from 'axios';
 
 const BASE_URL = 'https://api.tubecurl.com/youtube-video/';
 
 const getYoutubeId = (link) => {
+    if (link.indexOf('youtu.be')>=0){
+        let id = getLastParam(link)
+        console.log(id);
+        if (!id) {
+            throw new Error('no id in url');
+        }
+        console.log(id);
+        return getLastParam(link);
+    }
     const params = getAllQueryParameter(link);
     const id = params.v;
     if (!id) {
