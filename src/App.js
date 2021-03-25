@@ -1,158 +1,187 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import youtubeDl from "./api-consumers/youtube-downloader";
-import "./App.css";
-import { makeStyles } from "@material-ui/core/styles";
-// import Typography from "@material-ui/core/Typography";
-// import TextField from "@material-ui/core/TextField";
-// import Button from "@material-ui/core/Button";
+import youtubeDl from './api-consumers/youtube-downloader';
+import './App.css';
+import { makeStyles } from '@material-ui/core/styles';
+
 import {
-  TableBody,
-  TableCell,
-  TableRow,
-  Typography,
-  TextField,
-  Button,
-  Radio,
-} from "@material-ui/core";
+    Menu,
+    MenuItem,
+    Typography,
+    TextField,
+    Button,
+    Radio,
+    Grid,
+    InputAdornment,
+} from '@material-ui/core';
+import MediaCard from './components/Card';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    margin: theme.spacing(6, 0, 3),
-    textAlign: "center",
-  },
-  form: {
-    margin: theme.spacing(2, 0, 3),
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "baseline",
-  },
-  buttonConvert: {
-    height: theme.spacing(6),
-    margin: theme.spacing(0, 1),
-  },
-  input: {
-    height: theme.spacing(6),
-    width: theme.spacing(50),
-  },
-  formats: {
-    display: "flex",
-    justifyContent: "center",
-  },
-  buttonDownload: {
-    justifySelf: "center",
-  },
+    root: {
+        margin: theme.spacing(6, 3, 3),
+        textAlign: 'center',
+    },
+    form: {
+        margin: theme.spacing(2, 0, 3),
+        display: 'flex',
+        justifyContent: 'center',
+        paddingRight: '0px',
+    },
+    buttonConvert: {
+        height: 56,
+    },
+    input: {
+        height: theme.spacing(6),
+        width: theme.spacing(50),
+        paddingRight: '0px',
+        justifySelf: 'center',
+        border: '1px',
+    },
+    thumbnail: {
+        height: '400px',
+    },
+    formats: {
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    buttonDownload: {
+        justifySelf: 'center',
+    },
+    gridContainer: {
+        textAlign: 'center',
+        justifyContent: 'space-around',
+    },
+    endAdornment: {
+        paddingRight: 1,
+    },
 }));
 
 function App() {
-  const [youtubeLink, setYoutubeLink] = useState("");
-  const [formats, setFormats] = useState([]);
-  const [selectedFormatId, setSelectedFormatId] = useState("");
+    const [youtubeLink, setYoutubeLink] = useState('');
+    const [formats, setFormats] = useState([]);
+    const [selectedFormatId, setSelectedFormatId] = useState('');
+    const [videoProfile, setVideoProfile] = useState({});
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [toggleMenu, setToggleMenu] = useState(false);
+    const [thumbnail, setThumbnail] = useState('');
 
-  const handleSelect = (ev) => {
-    const formatId = ev.target.id;
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-    setSelectedFormatId(formatId);
-  };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
-  const renderFormats = formats
-    .filter(
-      (format) =>
-        format.acodec != "none" && !format.format.includes("audio only")
-    )
-    .map((item, index) => {
-      return (
-        <TableRow key={index}>
-          <TableCell>
-            <Radio
-              onClick={handleSelect}
-              size="small"
-              id={item.format_id}
-              checked={selectedFormatId === item.format_id}
-            />
-          </TableCell>
-          <TableCell id="extension"> {item.ext} </TableCell>
-          <TableCell id="size"> {`${item.filesize} MB`} </TableCell>
-          <TableCell id="resolution"> {item.format_note} </TableCell>
-        </TableRow>
+    const handleSelect = (ev) => {
+        const formatId = ev.target.id;
 
-        /* // <div key={index}>
-      //   <input
-      //     type="radio"
-      //     name="format"
-      //     onClick={handleSelect}
-      //     id={item.format_id}
-      //   />
-      //   <label>{`${item.ext} at resolution ${item.format_note}`}</label>
-      // </div> */
-      );
-    });
+        setSelectedFormatId(formatId);
+    };
 
-  const handleSubmit = async (ev) => {
-    ev.preventDefault();
-    const vidFormats = await youtubeDl.getFormats(youtubeLink).catch((err) => {
-      console.log("could not fetch formats due to =>", err);
-      return [];
-    });
-    console.log(vidFormats);
-    setFormats(vidFormats);
-  };
+    const organizeFormats = (formats = []) => {
+        let video = formats.filter(
+            (val) => val.vcodec && val.vcodec != 'none' && val.asr
+        );
+        let audio = formats.filter(
+            (val) => !(val.vcodec && val.vcodec != 'none')
+        );
+        let videoOnly = formats.filter(
+            (val) => val.vcodec && val.vcodec != 'none' && !val.asr
+        );
+        return [
+            {
+                groupName: 'video',
+                records: video,
+            },
+            {
+                groupName: 'audio',
+                records: audio,
+            },
+            {
+                groupName: 'video only',
+                records: videoOnly,
+            },
+        ];
+    };
+    const handleSubmit = async (ev) => {
+        ev.preventDefault();
+        let [vidFormats, profile] = await Promise.all([
+            youtubeDl.getFormats(youtubeLink),
+            youtubeDl.getProfiles(youtubeLink),
+        ]).catch((err) => {
+            console.log('could not fetch formats due to =>', err);
+            return [];
+        });
+        vidFormats = organizeFormats(vidFormats);
+        console.log(vidFormats);
+        setFormats(vidFormats);
+        setVideoProfile(profile);
+        setToggleMenu(true);
+        setThumbnail(profile.thumnail_url);
+        console.log(thumbnail, profile.thumnail_url);
+    };
 
-  const handleInput = (ev) => {
-    setYoutubeLink(ev.target.value);
-  };
+    const handleInput = (ev) => {
+        setYoutubeLink(ev.target.value);
+    };
 
-  const handleDownloadClick = async () => {
-    try {
-      const download = await youtubeDl.downloadVideo(
-        youtubeLink,
-        selectedFormatId
-      );
-      window.open(download.url);
-    } catch (err) {
-      console.log("could not download =>", err);
-    }
-  };
-  const classes = useStyles();
-  return (
-    <div className="App">
-      <Typography variant="h4" className={classes.root}>
-        Youtube Downloader
-      </Typography>
-      <Typography variant="body1">Download Youtube Videos for Free</Typography>
-      <form className={classes.form} onSubmit={handleSubmit}>
-        <TextField
-          className={classes.input}
-          id="outlined-secondary"
-          label="Paste Your Link Here"
-          variant="outlined"
-          color="secondary"
-          type="text"
-          onChange={handleInput}
-        />
-        <Button
-          variant="contained"
-          color="secondary"
-          className={classes.buttonConvert}
-          type="submit"
-        >
-          Get Link
-        </Button>
-      </form>
+    const classes = useStyles();
+    const endAdornment = {
+        endAdornment: (
+            <InputAdornment className={classes.adornment} position="end">
+                <Button
+                    color="secondary"
+                    className={classes.buttonConvert}
+                    type="submit"
+                >
+                    Get Link
+                </Button>
+            </InputAdornment>
+        ),
+        classes: {
+            adornedEnd: classes.endAdornment,
+        },
+    };
+    return (
+        <div className={classes.root}>
+            <Typography variant="h4">Youtube Downloader</Typography>
+            <Typography variant="body1">
+                Download Youtube Videos for Free
+            </Typography>
 
-      <div className={classes.formats}>
-        <TableBody>{renderFormats}</TableBody>
-      </div>
-      <Button
-        variant="contained"
-        color="secondary"
-        className={classes.buttonDownload}
-        onClick={handleDownloadClick}
-      >
-        Download
-      </Button>
-    </div>
-  );
+            <form className={classes.form} onSubmit={handleSubmit} id="form">
+                {/* <Grid container className={classes.gridContainer}>
+                    <Grid item xs={12} sm={9}> */}
+                <TextField
+                    className={classes.input}
+                    id="outlined-secondary"
+                    label="Paste Your Link Here"
+                    variant="outlined"
+                    color="secondary"
+                    type="text"
+                    onChange={handleInput}
+                    InputProps={endAdornment}
+                />
+                {/* </Grid>
+                    <Grid item xs={12} sm={3}> */}
+
+                {/* </Grid>
+                </Grid> */}
+            </form>
+            <div className={classes.formats}>
+                {toggleMenu ? (
+                    <MediaCard
+                        title={videoProfile.title}
+                        description={videoProfile.description}
+                        imageSrc={videoProfile.thumnail_url}
+                        formats={formats}
+                        youtubeLink={youtubeLink}
+                    ></MediaCard>
+                ) : null}
+            </div>
+        </div>
+    );
 }
 
 export default App;
