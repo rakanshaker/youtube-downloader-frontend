@@ -5,14 +5,11 @@ import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {
-    Menu,
-    MenuItem,
     Typography,
     TextField,
     Button,
-    Radio,
-    Grid,
     InputAdornment,
+    CircularProgress,
 } from '@material-ui/core';
 import MediaCard from './components/Card';
 
@@ -54,30 +51,19 @@ const useStyles = makeStyles((theme) => ({
     endAdornment: {
         paddingRight: 1,
     },
+    spinner: {
+        margin: '10px',
+    },
 }));
 
 function App() {
     const [youtubeLink, setYoutubeLink] = useState('');
     const [formats, setFormats] = useState([]);
-    const [selectedFormatId, setSelectedFormatId] = useState('');
     const [videoProfile, setVideoProfile] = useState({});
-    const [anchorEl, setAnchorEl] = useState(null);
     const [toggleMenu, setToggleMenu] = useState(false);
     const [thumbnail, setThumbnail] = useState('');
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleSelect = (ev) => {
-        const formatId = ev.target.id;
-
-        setSelectedFormatId(formatId);
-    };
+    const [badLink, setBadLink] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const organizeFormats = (formats = []) => {
         let video = formats.filter(
@@ -104,8 +90,12 @@ function App() {
             },
         ];
     };
+
     const handleSubmit = async (ev) => {
+        setToggleMenu(false);
+        setLoading(true);
         ev.preventDefault();
+
         let [vidFormats, profile] = await Promise.all([
             youtubeDl.getFormats(youtubeLink),
             youtubeDl.getProfiles(youtubeLink),
@@ -113,13 +103,19 @@ function App() {
             console.log('could not fetch formats due to =>', err);
             return [];
         });
-        vidFormats = organizeFormats(vidFormats);
-        console.log(vidFormats);
-        setFormats(vidFormats);
-        setVideoProfile(profile);
-        setToggleMenu(true);
-        setThumbnail(profile.thumnail_url);
-        console.log(thumbnail, profile.thumnail_url);
+        setLoading(false);
+        if (profile) {
+            vidFormats = organizeFormats(vidFormats);
+            setFormats(vidFormats);
+            setVideoProfile(profile);
+            setToggleMenu(true);
+            setThumbnail(profile.thumnail_url);
+        } else {
+            setBadLink(!badLink);
+            setTimeout(() => {
+                setBadLink((badLink) => !badLink);
+            }, 2000);
+        }
     };
 
     const handleInput = (ev) => {
@@ -169,6 +165,12 @@ function App() {
                 {/* </Grid>
                 </Grid> */}
             </form>
+            {loading ? (
+                <div className={classes.spinner}>
+                    <CircularProgress color="secondary"></CircularProgress>
+                </div>
+            ) : null}
+            {badLink ? <Typography>not a valid link</Typography> : null}
             <div className={classes.formats}>
                 {toggleMenu ? (
                     <MediaCard
