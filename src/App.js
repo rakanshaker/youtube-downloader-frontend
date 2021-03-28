@@ -50,9 +50,13 @@ const useStyles = makeStyles((theme) => ({
     },
     endAdornment: {
         paddingRight: 1,
+        marginLeft: 0,
     },
     spinner: {
         margin: '10px',
+    },
+    adornment: {
+        marginLeft: '0px',
     },
 }));
 

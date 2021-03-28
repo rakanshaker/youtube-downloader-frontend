@@ -12,6 +12,7 @@ import GroupedButtonSelector from './GroupedButtonSelector';
 import youtubeDl from '../api-consumers/youtube-downloader';
 import { CircularProgress } from '@material-ui/core';
 
+//TODO likes dislikes, views on card - maybe disable click style
 const useStyles = makeStyles({
     root: {
         maxWidth: 345,
