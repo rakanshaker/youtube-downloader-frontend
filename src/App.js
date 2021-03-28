@@ -183,6 +183,9 @@ function App() {
                         imageSrc={videoProfile.thumnail_url}
                         formats={formats}
                         youtubeLink={youtubeLink}
+                        likes={videoProfile.likes}
+                        dislikes={videoProfile.dislikes}
+                        views={videoProfile.views}
                     ></MediaCard>
                 ) : null}
             </div>
