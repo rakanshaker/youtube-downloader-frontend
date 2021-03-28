@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import { useState } from 'react';
 import GroupedButtonSelector from './GroupedButtonSelector';
 import youtubeDl from '../api-consumers/youtube-downloader';
+import { CircularProgress } from '@material-ui/core';
 
 const useStyles = makeStyles({
     root: {
@@ -31,23 +32,24 @@ export default function MediaCard({
     formats,
     youtubeLink,
 }) {
-    const [formatId, setFormatId] = useState('');
+    const [formatId, setFormatId] = useState(formats[0].records[0].format_id);
+    const [downloading, setDownloading] = useState(false);
+    const [badLink, setBadLink] = useState(false);
     const classes = useStyles();
     const onMenuClick = (ev) => {
         setFormatId(ev.target.getAttribute('data-value'));
     };
     const onDownload = async (ev) => {
-        if (formatId) {
-            console.log(youtubeLink);
-            const download = await youtubeDl
-                .downloadVideo(youtubeLink, formatId)
-                .catch((err) => {
-                    console.log('could not download video =>', err);
-                    return false;
-                });
-            return download && window.open(download.url);
-        }
-        alert('some dumb');
+        setDownloading(true);
+        const download = await youtubeDl
+            .downloadVideo(youtubeLink, formatId)
+            .catch((err) => {
+                alert('could not download video =>' + err);
+
+                return false;
+            });
+        setDownloading(false);
+        return download && window.open(download.url);
     };
     return (
         <Card className={classes.root}>
@@ -79,7 +81,11 @@ export default function MediaCard({
                 <Button onClick={onDownload} size="large" color="secondary">
                     Download
                 </Button>
+                {downloading ? (
+                    <CircularProgress color="secondary"></CircularProgress>
+                ) : null}
             </CardActions>
+            {badLink ? <Typography>Make a Selection</Typography> : null}
         </Card>
     );
 }

@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
     item: {
-        paddingLeft: 3 * theme.spacing.unit,
+        paddingLeft: 3 * theme.spacing(2),
     },
     group: {
         fontWeight: theme.typography.fontWeightMedium,

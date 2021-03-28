@@ -67,13 +67,13 @@ function App() {
 
     const organizeFormats = (formats = []) => {
         let video = formats.filter(
-            (val) => val.vcodec && val.vcodec != 'none' && val.asr
+            (val) => val.vcodec && val.vcodec !== 'none' && val.asr
         );
         let audio = formats.filter(
-            (val) => !(val.vcodec && val.vcodec != 'none')
+            (val) => !(val.vcodec && val.vcodec !== 'none')
         );
         let videoOnly = formats.filter(
-            (val) => val.vcodec && val.vcodec != 'none' && !val.asr
+            (val) => val.vcodec && val.vcodec !== 'none' && !val.asr
         );
         return [
             {
