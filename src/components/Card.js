@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import { useState } from 'react';
 import GroupedButtonSelector from './GroupedButtonSelector';
 import youtubeDl from '../api-consumers/youtube-downloader';
-import { CircularProgress, ThemeProvider } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { formattedNum } from '../utils/FormattedNum';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
