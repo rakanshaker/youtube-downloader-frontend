@@ -68,7 +68,9 @@ export default function MediaCard({
                 return false;
             });
         setDownloading(false);
-        return download && window.open(download.url);
+        if (download) {
+            window.location = download.url;
+        }
     };
     return (
         <Card className={classes.root}>
