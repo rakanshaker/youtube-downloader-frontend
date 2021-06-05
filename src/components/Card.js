@@ -130,7 +130,7 @@ export default function MediaCard({
                     selectorId={formatId}
                 ></GroupedButtonSelector>
                 <Button onClick={onDownload} size="large" color="secondary">
-                    Download
+                    Generate Link
                 </Button>
                 {downloading ? (
                     <CircularProgress color="secondary"></CircularProgress>
@@ -147,7 +147,10 @@ export default function MediaCard({
                 <DialogTitle id="alert-dialog-title">Download Link Generated</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        If you're on iPhone (safari) hold the link and choose the option Download Linked File
+                        If you're on iPhone (safari) hold the link and choose the option Download Linked File. 
+                        <br></br>
+                        <br></br>
+                        Note this is not a long term link , it will expire in 15 minutes.
           </DialogContentText>
                 </DialogContent>
                 <DialogActions className={classes.actionsBar}>
