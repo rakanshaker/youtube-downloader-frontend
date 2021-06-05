@@ -9,10 +9,16 @@ import Typography from '@material-ui/core/Typography';
 import { useState } from 'react';
 import GroupedButtonSelector from './GroupedButtonSelector';
 import youtubeDl from '../api-consumers/youtube-downloader';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Modal } from '@material-ui/core';
 import { formattedNum } from '../utils/FormattedNum';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
+import DeviceDetector from "device-detector-js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,7 +45,15 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(-0.9, 1),
         alignItems: 'center',
     },
+    actionsBar: {
+        display: 'flex',
+        justifyContent: 'center'
+
+    }
 }));
+
+
+
 
 export default function MediaCard({
     title,
@@ -54,7 +68,9 @@ export default function MediaCard({
     const [formatId, setFormatId] = useState(formats[0].records[0].format_id);
     const [downloading, setDownloading] = useState(false);
     const [badLink, setBadLink] = useState(false);
+    const [downloadResponse, setDownloadLink] = useState({})
     const classes = useStyles();
+    const rootRef = React.useRef(null);
     const onMenuClick = (ev) => {
         setFormatId(ev.target.getAttribute('data-value'));
     };
@@ -67,11 +83,12 @@ export default function MediaCard({
 
                 return false;
             });
+
         setDownloading(false);
-        if (download) {
-            window.location = download.url;
-        }
+        setDownloadLink(download);
+
     };
+
     return (
         <Card className={classes.root}>
             <CardMedia
@@ -119,6 +136,28 @@ export default function MediaCard({
                     <CircularProgress color="secondary"></CircularProgress>
                 ) : null}
             </CardActions>
+
+
+            <Dialog
+                open={!!downloadResponse.url}
+                onClose={() => setDownloadLink({})}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">Download Link Generated</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        If you're on iPhone (safari) hold the link and choose the option Download Linked File
+          </DialogContentText>
+                </DialogContent>
+                <DialogActions className={classes.actionsBar}>
+                    <a href={downloadResponse.url} ><Typography>Download</Typography></a>
+                </DialogActions>
+            </Dialog>
+
+
+
+
             {badLink ? <Typography>Make a Selection</Typography> : null}
         </Card>
     );
